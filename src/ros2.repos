@@ -1,0 +1,25 @@
+repositories:
+  mocap4ros2_optitrack:
+    type: git
+    url: https://github.com/MOCAP4ROS2-Project/mocap4ros2_optitrack.git
+    version: rolling
+  mocap4r2:
+    type: git
+    url: https://github.com/MOCAP4ROS2-Project/mocap4r2.git
+    version: rolling
+  mocap_msgs:
+    type: git
+    url: https://github.com/MOCAP4ROS2-Project/mocap4r2_msgs.git 
+    version: rolling
+  # swiftnav-ros2:
+  #   type: git
+  #   url: https://github.com/swift-nav/swiftnav-ros2.git
+  #   version: master
+  # zed-ros2-examples:
+  #   type: git
+  #   url: https://github.com/stereolabs/zed-ros2-examples.git
+  #   version: master
+  # zed-ros2-wrapper: 
+  #   type: git
+  #   url: https://github.com/stereolabs/zed-ros2-wrapper.git
+  #   version: master
