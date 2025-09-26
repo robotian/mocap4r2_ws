@@ -1,0 +1,12 @@
+[submodule "src/mocap4ros2_optitrack"]
+	path = src/mocap4ros2_optitrack
+	url = https://github.com/MOCAP4ROS2-Project/mocap4ros2_optitrack.git
+	branch = rolling
+[submodule "src/mocap4r2"]
+	path = src/mocap4r2
+	url = https://github.com/MOCAP4ROS2-Project/mocap4r2.git
+	branch = rolling
+[submodule "src/mocap_msgs"]
+	path = src/mocap_msgs
+	url = https://github.com/MOCAP4ROS2-Project/mocap4r2_msgs.git
+	branch = rolling
