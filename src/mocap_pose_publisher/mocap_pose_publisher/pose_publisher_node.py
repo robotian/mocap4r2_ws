@@ -16,14 +16,14 @@ class MocapPosePublisher(Node):
         self.declare_parameter('namespace', '')
         self.ns = self.get_parameter('namespace').get_parameter_value().string_value
         # number of recent twist estimates to average (default 5)
-        self.declare_parameter('twist_window', 5)
+        self.declare_parameter('twist_window', 20)
         self.twist_window = int(self.get_parameter('twist_window').get_parameter_value().integer_value)
         self.sub = self.create_subscription(
             RigidBodies,
             'rigid_bodies',
             # f'{self.ns}/rigid_bodies' if self.ns else '/rigid_bodies',
             self.rigidbodies_callback,
-            10
+            30
         )
         self.rb_publishers = {}
         self.rb_odom_publishers = {}
@@ -120,14 +120,20 @@ class MocapPosePublisher(Node):
                 prev = self._prev_state[name]
                 dt = now - prev['time'] if ('time' in prev and prev['time'] is not None) else 0.0
                 if dt > 1e-9:
+                    # cur_pos = np.array([rb.pose.position.x, rb.pose.position.y], dtype=float)
+                    # prev_pos = np.array(prev['pos'], dtype=float)
                     cur_pos = np.array([rb.pose.position.x, rb.pose.position.y, rb.pose.position.z], dtype=float)
                     prev_pos = np.array(prev['pos'], dtype=float)
+                    # ds = cur_pos - prev_pos
+                    # lin_vel_x = math.sqrt(ds.dot(ds)) / dt
+                    # lin_v = [lin_vel_x, 0.0, 0.0]  # Assuming motion primarily along x-axis
                     lin_v = (cur_pos - prev_pos) / dt
                     q_prev = prev['quat']
                     q_cur = self._quat_to_np(rb.pose.orientation)
                     ang_v = self._quat_to_angular_vel(q_prev, q_cur, dt)
             # store current state
             self._prev_state[name] = {
+                # 'pos': (rb.pose.position.x, rb.pose.position.y),
                 'pos': (rb.pose.position.x, rb.pose.position.y, rb.pose.position.z),
                 'quat': self._quat_to_np(rb.pose.orientation),
                 'time': now
@@ -136,6 +142,8 @@ class MocapPosePublisher(Node):
             # push latest estimate into per-rigidbody buffers and compute simple mean over last N samples
             if name not in self._twist_buffers:
                 self._twist_buffers[name] = {'lin_buf': deque(maxlen=self.twist_window), 'ang_buf': deque(maxlen=self.twist_window)}
+                self.get_logger().info(f'Velocity buffer for Rigidbody {name} is created with window size {self.twist_window}')
+
             buf = self._twist_buffers[name]
             buf['lin_buf'].append(np.array(lin_v, dtype=float))
             buf['ang_buf'].append(np.array(ang_v, dtype=float))
